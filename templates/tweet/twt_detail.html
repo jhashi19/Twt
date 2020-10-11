@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Tweet Detail{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/twt.css' %}">
+<link rel="stylesheet" href="{% static 'css/twt_detail.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="profile">
+    <!-- プロフィール画面に飛ぶリンクを追加する -->
+    <a href="">
+        {% if tweet.author.icon %}
+            <img src="{{ tweet.author.icon.url }}" width="40" height="40">
+        {% else %}
+            <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+        {% endif %}
+    </a>
+    <a class="username" href="">{{ tweet.author.username }}</a>
+</div>
+<div class="tweet-detail">
+    <p class="tweet-text">{{ tweet.tweet }}</p>
+    {% if tweet.picture %}
+        <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
+    {% endif %}
+    <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
+    <!-- 罫線入れる -->
+    <span>{{ tweet.like|length }}件のいいね！</span>
+    <!-- 罫線入れる -->
+    <div>
+        <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.jpg' %}"></a>
+        <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
+        <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
+    </div>
+    <!-- 罫線入れる -->
+</div>
+    {% for comment in comments %}
+        <div class="tweetblock">
+            <div class="tweetdiv">
+                <!-- プロフィール画面に飛ぶ -->
+                <a class="inlink" href="">
+                    {% if comment.author.icon %}
+                        <img src="{{ comment.author.icon.url }}" width="40" height="40">
+                    {% else %}
+                        <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+                    {% endif %}
+                </a>
+            </div>
+            <div class="tweetdiv">
+                <p class="username">{{ comment.author.username }}</p>
+                <p class="tweet-text">{{ comment.comment }}</p>
+                {% if comment.picture %}
+                    <p class="tweetpicture"><img src="{{ comment.picture.url }}" width="380"></p>
+                {% endif %}
+                <!-- コメント入力画面に飛ぶ -->
+                <a class="inlink" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="/media/image/comment.jpg"></a>
+                <a class="inlink" href=""><img class="like-image" src="/media/image/heart_blank.png"></a>
+                <p class="tweettime">{{ tweet.tweet_time }}</p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock content %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Log In{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock css %}
+
+{% block content %}
+{% if form.errors %}
+  <p class="red-message">Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  <div class="input-form">
+    {{ form|crispy}}
+    <input type="submit" value="login" class="btn btn-success" />
+  </div>
+  <!-- <table>
+    <tr>
+      <td>{{ form.username.label_tag }}</td>
+      <td>{{ form.username }}</td>
+    </tr>
+    <tr>
+      <td>{{ form.password.label_tag }}</td>
+      <td>{{ form.password }}</td>
+    </tr>
+  </table> -->
+
+  <input type="hidden" name="next" value="{{ next }}" />
+</form>
+
+{% endblock %}

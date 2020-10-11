@@ -1,0 +1,64 @@
+body {
+    margin: 5px;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover {
+    text-decoration: none;
+    color: black;
+}
+
+.header-tweet {
+    text-align: left;
+}
+
+.header-account {
+    text-align: right;
+}
+
+.header-container {
+    overflow: hidden;
+}
+
+.content-block {
+    margin: 5px;
+}
+
+.icon {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.username-field {
+    width: 300px;
+}
+
+.age-field {
+    width: 100px;
+}
+
+.email-field {
+    width: 300px;
+}
+
+.password-field {
+    width: 300px;
+}
+
+.red-message {
+    color: red;
+}
+
+.comment-image, .like-image {
+    width: 16px;
+    height: 16px;
+}
+
+.add-tweet {
+    z-index: 10;
+}
