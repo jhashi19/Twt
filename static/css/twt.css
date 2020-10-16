@@ -60,12 +60,3 @@
     right: 10px;
     z-index: 100;
 }
-
-.tweet-end {
-    border: solid 1px;
-    color: gray;
-    opacity: .1;
-    margin: 3px;
-    background-color: gray;
-    width: 100%;
-}

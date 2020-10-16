@@ -34,7 +34,7 @@
         <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
         <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
     </div>
-    <!-- 罫線入れる -->
+    <div class="partition-line"></div>
 </div>
     {% for comment in comments %}
         <div class="tweetblock">
@@ -54,11 +54,10 @@
                 {% if comment.picture %}
                     <p class="tweetpicture"><img src="{{ comment.picture.url }}" width="380"></p>
                 {% endif %}
-                <!-- コメント入力画面に飛ぶ -->
-                <a class="inlink" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="/media/image/comment.jpg"></a>
+                <p class="tweettime">{{ comment.created|date:"Y/m/j H:i:s" }}</p>
                 <a class="inlink" href=""><img class="like-image" src="/media/image/heart_blank.png"></a>
-                <p class="tweettime">{{ tweet.tweet_time }}</p>
             </div>
         </div>
+        <div class="partition-line"></div>
     {% endfor %}
 {% endblock content %}

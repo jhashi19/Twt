@@ -62,3 +62,16 @@ a:hover {
 .add-tweet {
     z-index: 10;
 }
+
+.partition-line {
+    border: solid 1px;
+    color: gray;
+    opacity: .1;
+    margin: 3px;
+    background-color: gray;
+    width: 100%;
+}
+
+.asteriskField {
+    display: none;
+}

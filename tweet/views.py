@@ -46,7 +46,7 @@ class TwtDetailView(LoginRequiredMixin, DetailView):
         now = datetime.now()
         tweet_time = calc_tweet_time(now, tweet.created)
         context.update({
-            'comments': Comment.objects.select_related('tweet').filter(
+            'comments': Comment.objects.filter(
                 tweet__id=self.kwargs['pk']),
             'tweet': tweet,
             'tweet_time': tweet_time
@@ -61,17 +61,9 @@ class TwtCreateView(LoginRequiredMixin, CreateView):
     login_url = 'login'
     success_url = reverse_lazy('tweet:twt_list')
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     tweet = Tweet.objects.get(pk=self.kwargs['pk'])
-    #     context.update({
-    #         'tweet': tweet,
-    #     })
-    #     return context
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.author = self.request.user
+    #     return super().form_valid(form)
 
     def post(self, *args, **kwargs):
         form = TweetForm(self.request.POST, self.request.FILES)
@@ -80,8 +72,8 @@ class TwtCreateView(LoginRequiredMixin, CreateView):
             return render(self.request, 'twt_create.html', {'form': form})
         form.instance.author = self.request.user
         form.save()
-        return redirect(reverse_lazy('tweet:twt_detail'),
-                        args=(form.instance.id,))
+        return redirect(reverse_lazy('tweet:twt_detail',
+                                     args=(form.instance.id,)))
 
 
 class TwtEditView(LoginRequiredMixin, UpdateView):
@@ -107,11 +99,6 @@ class TwtCommentCreateView(LoginRequiredMixin, CreateView):
     # →modelにTweetも指定してリンクの引数に対応するツイートを取得して画面の上部に表示する。
     # 上にツイートはあるが、表示はコメント部分が一番上に表示されるように最初からスクロールされた状態で表示する。
 
-    def form_valid(self, form):
-        form.instance.tweet = Tweet.objects.get(pk=self.kwargs.get('pk')) #tweet_idがうまく渡せていない。
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tweet = Tweet.objects.get(pk=self.kwargs['pk'])
@@ -126,9 +113,11 @@ class TwtCommentCreateView(LoginRequiredMixin, CreateView):
         if not is_valid:
             return render(self.request, 'tweet/comment_create.html',
                           {'form': form})
+        form.instance.tweet = Tweet.objects.get(pk=self.kwargs['pk'])
+        form.instance.author = self.request.user
         form.save()
-        return redirect(reverse_lazy('tweet:twt_detail'),
-                        args=(form.instance.tweet.id,))
+        return redirect(reverse_lazy('tweet:twt_detail',
+                                     args=(form.instance.tweet_id,)))
 
 
 def calc_tweet_time(now, created_time):

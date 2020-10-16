@@ -5,10 +5,11 @@
 {% block title %}Create Comment{% endblock title %}
 
 {% block content %}
+<!-- 画面上部にキャンセルのリンクをつけて、detail画面、またはlist画面に戻るようにする。 -->
 <div class="profile">
-    <!-- プロフィール画面に飛ぶリンクを追加する -->
     <a href="">
         {% if tweet.author.icon %}
+            <!-- プロフィール画面に飛ぶリンクを追加する -->
             <img src="{{ tweet.author.icon.url }}" width="40" height="40">
         {% else %}
             <img class="icon" src="{% static 'image/icon/noimage.png' %}">
@@ -22,19 +23,11 @@
         <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
     {% endif %}
     <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
-    <!-- 罫線入れる -->
-    <span>{{ tweet.like|length }}件のいいね！</span>
-    <!-- 罫線入れる -->
-    <div>
-        <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.jpg' %}"></a>
-        <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
-        <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
-    </div>
-    <!-- 罫線入れる -->
 </div>
+<div class="partition-line"></div>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form|crispy }}
     <input type="submit" value="Comment" class="btn btn-primary">
 </form>
 {% endblock content %}

@@ -17,12 +17,13 @@
     {% endblock css %}
   </head>
   <body>
+    {% block header %}
     <div class="header-container">
-      <!-- このヘッダは全部消して、ツイートはtwt_list.htmlの画面右下に固定でアイコンリンクを表示。 -->
-      <!-- ヘッダには左端にプロフィール画面へのリンクを表示、中央には画面の一番上に行くリンクを表示。 -->
+      <!-- ヘッダには左端にプロフィール画面へのリンクを表示、中央には画面の一番上に行くリンクを表示するよう修正する。 -->
       {% if user.is_authenticated %}
       <div class="header-tweet">
         <span><a class="btn btn-primary add-tweet" href="{% url 'tweet:twt_create' %}">+Tweet</a></span>
+        <span><a href="{% url 'tweet:twt_list' %}"><img class="icon" src="{% static 'image/pigeon.jpg' %}"></a></span>
         <span><a class="btn btn-dark" href="{% url 'logout' %}">Log out</a></span>
       </div>
       {% else %}
@@ -31,6 +32,7 @@
       </div>
       {% endif %}
     </div>
+    {% endblock header %}
     <div class="content-block">
       {% block content %} {% endblock content %}
     </div>
