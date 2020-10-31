@@ -13,7 +13,7 @@
     <!-- プロフィール画面に飛ぶリンクを追加する -->
     <a href="">
         {% if tweet.author.icon %}
-            <img src="{{ tweet.author.icon.url }}" width="40" height="40">
+            <img class="icon" src="{{ tweet.author.icon.url }}">
         {% else %}
             <img class="icon" src="{% static 'image/icon/noimage.png' %}">
         {% endif %}
@@ -38,11 +38,17 @@
 </div>
     {% for comment in comments %}
         <div class="tweetblock">
+        <!-- 下三角マークのプルダウンで削除と編集のリンクを表示するように修正する -->
+        {% if user == comment.author %}
+            <div class="delete-button">
+                <a class="btn btn-secondary" href="{% url 'tweet:comment_delete' comment.pk %}">Delete</a>
+            </div>
+        {% endif %}
             <div class="tweetdiv">
                 <!-- プロフィール画面に飛ぶ -->
                 <a class="inlink" href="">
                     {% if comment.author.icon %}
-                        <img src="{{ comment.author.icon.url }}" width="40" height="40">
+                        <img class="icon" src="{{ comment.author.icon.url }}">
                     {% else %}
                         <img class="icon" src="{% static 'image/icon/noimage.png' %}">
                     {% endif %}
@@ -51,9 +57,6 @@
             <div class="tweetdiv">
                 <p class="username">{{ comment.author.username }}</p>
                 <p class="tweet-text">{{ comment.comment }}</p>
-                {% if comment.picture %}
-                    <p class="tweetpicture"><img src="{{ comment.picture.url }}" width="380"></p>
-                {% endif %}
                 <p class="tweettime">{{ comment.created|date:"Y/m/j H:i:s" }}</p>
                 <a class="inlink" href=""><img class="like-image" src="/media/image/heart_blank.png"></a>
             </div>

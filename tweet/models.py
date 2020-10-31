@@ -25,7 +25,7 @@ class Tweet(models.Model):
             return self.tweet[:10] + '...'
 
     def get_absolute_url(self):
-        return reverse('tweet:twt_list', args=[str(self.id)])
+        return reverse('tweet:twt_detail', args=[str(self.id)])
 
 
 class Comment(models.Model):

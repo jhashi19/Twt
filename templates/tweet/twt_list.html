@@ -9,9 +9,16 @@
 
 {% block content %}
 <h1>Tweet</h1>
-<div class="create-tweet"><a class="btn btn-primary" href="{% url 'tweet:twt_create' %}">+Tweet</a></div>
+<div class="create-tweet"><a href="{% url 'tweet:twt_create' %}"><img class="icon" src="{% static 'image/pencil.png' %}"></a></div>
+<div class="partition-line"></div>
 {% for tweet in tweets %}
     <div class="tweetblock">
+        <!-- 下三角マークのプルダウンで削除と編集のリンクを表示するように修正する -->
+        {% if user == tweet.tweet.author %}
+            <div class="delete-button">
+                <a class="btn btn-secondary" href="{% url 'tweet:twt_delete' tweet.tweet.id %}">Delete</a>
+            </div>
+        {% endif %}
         <a href="{% url 'tweet:twt_detail' tweet.tweet.pk %}"></a>
         <div class="tweetdiv">
             <!-- プロフィール画面に飛ぶ -->
@@ -24,6 +31,7 @@
             </a>
         </div>
         <div class="tweetdiv tweet-content">
+
             <p class="username">{{ tweet.tweet.author.username }}</p>
             <p class="tweet-text">{{ tweet.tweet.tweet }}</p>
             {% if tweet.tweet.picture %}

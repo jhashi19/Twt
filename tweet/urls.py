@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (TwtListView, TwtDetailView, TwtDeleteView, TwtCreateView,
-                    TwtCommentCreateView)
+                    TwtCommentCreateView, TwtCommentDeleteView)
 
 
 app_name = 'tweet'
@@ -11,4 +11,6 @@ urlpatterns = [
     path('create/', TwtCreateView.as_view(), name='twt_create'),
     path('comment/create/<int:pk>', TwtCommentCreateView.as_view(),
          name='comment_create'),
+    path('comment/delete/<int:pk>', TwtCommentDeleteView.as_view(),
+         name='comment_delete'),
 ]

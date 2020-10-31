@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Comment Delete{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/twt.css' %}">
+{% endblock css %}
+
+{% block content %}
+<h5>Are you sure to delete this comment?</h5>
+<div class="partition-line"></div>
+<div class="tweetblock">
+    <div class="tweetdiv">
+        <!-- プロフィール画面に飛ぶ -->
+        <a class="inlink" href="">
+            {% if comment.author.icon %}
+                <img class="icon" src="{{ comment.author.icon.url }}">
+            {% else %}
+                <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+            {% endif %}
+        </a>
+    </div>
+    <div class="tweetdiv">
+        <p class="username">{{ comment.author.username }}</p>
+        <p class="tweet-text">{{ comment.comment }}</p>
+        <p class="tweettime">{{ comment.created|date:"Y/m/j H:i:s" }}</p>
+        <span class="small-char">{{ comment.like|length }}件のいいね！</span>
+    </div>
+</div>
+<div class="partition-line"></div>
+<form action="" method="POST">{% csrf_token %}
+    <input type="submit" class="btn btn-outline-danger" value="Yes">
+    <a class="btn btn-outline-dark" href="{% url 'tweet:twt_detail' tweet.pk %}" role="button">No</a>
+</form>
+<div class="partition-line"></div>
+<h5>↓Comment to this tweet</h5>
+<div class="profile">
+    <!-- プロフィール画面に飛ぶリンクを追加する -->
+    <a href="">
+        {% if tweet.author.icon %}
+            <img class="icon" src="{{ tweet.author.icon.url }}">
+        {% else %}
+            <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+        {% endif %}
+    </a>
+    <a class="username" href="">{{ tweet.author.username }}</a>
+</div>
+<div class="tweet-delete">
+    <p class="tweet-text">{{ tweet.tweet }}</p>
+    {% if tweet.picture %}
+        <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
+    {% endif %}
+    <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
+    <!-- <div class="partition-line"></div> -->
+    <span>{{ tweet.like|length }}件のいいね！</span>
+</div>
+{% endblock content %}

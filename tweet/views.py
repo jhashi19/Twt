@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, DetailView
@@ -8,6 +8,7 @@ from .models import Tweet, Comment
 from .forms import TweetForm, CommentForm
 
 
+# LoginRequiredMixinを先に継承することでログインしていないユーザはツイート画面を開けないようにする。
 class IndexView(LoginRequiredMixin, RedirectView):
     url = reverse_lazy('tweet:twt_list')
     login_url = 'login'
@@ -61,10 +62,6 @@ class TwtCreateView(LoginRequiredMixin, CreateView):
     login_url = 'login'
     success_url = reverse_lazy('tweet:twt_list')
 
-    # def form_valid(self, form):
-    #     form.instance.author = self.request.user
-    #     return super().form_valid(form)
-
     def post(self, *args, **kwargs):
         form = TweetForm(self.request.POST, self.request.FILES)
         is_valid = form.is_valid()
@@ -76,16 +73,32 @@ class TwtCreateView(LoginRequiredMixin, CreateView):
                                      args=(form.instance.id,)))
 
 
-class TwtEditView(LoginRequiredMixin, UpdateView):
+# UserPassesTestMixinを継承することで、投稿の編集は投稿者のみがすることができるようになる。
+class TwtEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tweet
     template_name = 'twt_edit.html'
     fields = ['tweet', 'picture']
     login_url = 'login'
 
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
 
-class TwtDeleteView(LoginRequiredMixin, DeleteView):
+
+class TwtDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Tweet
+    template_name = 'tweet/twt_delete.html'
     success_url = reverse_lazy('tweet:twt_list')
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tweet = Tweet.objects.get(pk=self.kwargs['pk'])
+        context.update({'tweet': tweet})
+        return context
 
 
 class TwtCommentCreateView(LoginRequiredMixin, CreateView):
@@ -94,9 +107,6 @@ class TwtCommentCreateView(LoginRequiredMixin, CreateView):
     fields = ['comment']
     # success_url = reverse_lazy('tweet:twt_detail')
     login_url = 'login'
-    # ツイートのpkを引数としてとってきて、それに紐づくコメントとして登録する。
-    # コメントを入力するテキストエリアの上に元のツイートを表示する。
-    # →modelにTweetも指定してリンクの引数に対応するツイートを取得して画面の上部に表示する。
     # 上にツイートはあるが、表示はコメント部分が一番上に表示されるように最初からスクロールされた状態で表示する。
 
     def get_context_data(self, **kwargs):
@@ -118,6 +128,30 @@ class TwtCommentCreateView(LoginRequiredMixin, CreateView):
         form.save()
         return redirect(reverse_lazy('tweet:twt_detail',
                                      args=(form.instance.tweet_id,)))
+
+
+class TwtCommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Comment
+    template_name = 'tweet/comment_delete.html'
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        context.update({
+            'comment': comment,
+            'tweet': Tweet.objects.get(
+                id=comment.tweet.id),
+        })
+        return context
+
+    def get_success_url(self, **kwargs):
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        return reverse_lazy('tweet:twt_detail',
+                            kwargs={'pk': comment.tweet.id})
 
 
 def calc_tweet_time(now, created_time):
