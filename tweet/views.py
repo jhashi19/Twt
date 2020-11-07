@@ -9,12 +9,12 @@ from .forms import TweetForm, CommentForm
 
 
 # LoginRequiredMixinを先に継承することでログインしていないユーザはツイート画面を開けないようにする。
-class IndexView(LoginRequiredMixin, RedirectView):
+class IndexView(RedirectView):
     url = reverse_lazy('tweet:twt_list')
     login_url = 'login'
 
 
-class TwtListView(LoginRequiredMixin, ListView):
+class TwtListView(ListView):
     model = Tweet
     template_name = 'tweet/twt_list.html'
     login_url = 'login'
@@ -36,7 +36,7 @@ class TwtListView(LoginRequiredMixin, ListView):
         return context
 
 
-class TwtDetailView(LoginRequiredMixin, DetailView):
+class TwtDetailView(DetailView):
     model = Tweet
     template_name = 'tweet/twt_detail.html'
     login_url = 'login'
@@ -76,7 +76,7 @@ class TwtCreateView(LoginRequiredMixin, CreateView):
 # UserPassesTestMixinを継承することで、投稿の編集は投稿者のみがすることができるようになる。
 class TwtEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tweet
-    template_name = 'twt_edit.html'
+    template_name = 'tweet/twt_edit.html'
     fields = ['tweet', 'picture']
     login_url = 'login'
 
@@ -147,6 +147,32 @@ class TwtCommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
                 id=comment.tweet.id),
         })
         return context
+
+    def get_success_url(self, **kwargs):
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        return reverse_lazy('tweet:twt_detail',
+                            kwargs={'pk': comment.tweet.id})
+
+
+class TwtCommentEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Comment
+    template_name = 'tweet/comment_edit.html'
+    fields = ['comment']
+    login_url = 'login'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        comment = Comment.objects.get(pk=self.kwargs['pk'])
+        context.update({
+            'comment': comment,
+            'tweet': Tweet.objects.get(
+                id=comment.tweet.id),
+        })
+        return context
+
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
 
     def get_success_url(self, **kwargs):
         comment = Comment.objects.get(pk=self.kwargs['pk'])

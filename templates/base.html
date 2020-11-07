@@ -6,12 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock title %}</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
-      crossorigin="anonymous"
-    />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block css %}
     {% endblock css %}
@@ -22,13 +17,26 @@
       <!-- ヘッダには左端にプロフィール画面へのリンクを表示、中央には画面の一番上に行くリンクを表示するよう修正する。 -->
       {% if user.is_authenticated %}
       <div class="header-tweet">
-        <span><a class="btn btn-primary add-tweet" href="{% url 'tweet:twt_create' %}">+Tweet</a></span>
-        <span><a href="{% url 'tweet:twt_list' %}"><img class="icon" src="{% static 'image/pigeon.jpg' %}"></a></span>
-        <span><a class="btn btn-dark" href="{% url 'logout' %}">Log out</a></span>
+        <div>
+          <a href="#">
+          {% if user.icon %}
+            <img class="mini-icon" src="{{ user.icon.url }}">
+          {% else %}
+            <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+          {% endif %}
+          </a>
+        </div>
+        <div><a href="{% url 'tweet:twt_list' %}"><img class="icon" src="{% static 'image/pigeon.jpg' %}"></a></div>
+        <div><a class="btn btn-dark" href="{% url 'logout' %}">Log out</a></div>
       </div>
       {% else %}
-      <div class="header-account">
-        <span><a class="btn btn-info" href="{% url 'users:signup' %}">SignUp</a></span>
+      <div class="header-tweet">
+        <div></div>
+        <div><a href="{% url 'tweet:twt_list' %}"><img class="icon" src="{% static 'image/pigeon.jpg' %}"></a></div>
+        <div>
+          <span><a class="btn btn-light" href="{% url 'login' %}">LogIn</a></span>
+          <span><a class="btn btn-info" href="{% url 'users:signup' %}">SignUp</a></span>
+        </div>
       </div>
       {% endif %}
     </div>

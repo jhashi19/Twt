@@ -30,5 +30,6 @@ class UserUpdateView(LoginRequiredMixin, UpdateView):
     form_class = CustomUserChangeModelForm
     success_url = reverse_lazy('login')  # ユーザ情報を更新したらプロフィール画面に戻るよう修正。
     login_url = 'login'
+    fields = ['username', 'icon', 'email', 'age']
 
 # プロフィール画面作成

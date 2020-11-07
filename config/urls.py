@@ -8,7 +8,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
-    path('users/', include('django.contrib.auth.urls')),
+    path('users/', include('django.contrib.auth.urls')),  # Django標準のログイン機能を使用
     path('tweet/', include('tweet.urls')),
     path('', IndexView.as_view(), name='index'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

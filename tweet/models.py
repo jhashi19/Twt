@@ -17,6 +17,7 @@ class Tweet(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     like = models.IntegerField(default=0)
+    # ↑いいねはIntegerではなく、ForeignKeyでユーザを直接紐づけるようにする。default=null
 
     def __str__(self):
         if len(self.tweet) < 10:
@@ -39,6 +40,7 @@ class Comment(models.Model):
         on_delete=models.CASCADE
     )
     like = models.IntegerField(default=0)
+    # ↑いいねはIntegerではなく、ForeignKeyでユーザを直接紐づけるようにする。
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

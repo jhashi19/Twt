@@ -1,7 +1,6 @@
 body {
-    margin: 5px;
+    background-color: rgb(220, 255, 247);
 }
-
 a {
     text-decoration: none;
     color: black;
@@ -12,26 +11,42 @@ a:hover {
     color: black;
 }
 
-.header-tweet {
-    text-align: left;
-}
-
 .header-account {
     text-align: right;
 }
 
 .header-container {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 2px 5px;
+    background-color: rgb(132, 252, 186);
     overflow: hidden;
+    z-index: 100;
+}
+
+.header-tweet {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .content-block {
-    margin: 5px;
+    width: 100%;
+    padding: 5px;
+    padding-top: 50px;
 }
 
 .icon {
     border-radius: 50%;
     width: 50px;
     height: 50px;
+}
+
+.mini-icon {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
 }
 
 .username-field {
@@ -78,6 +93,8 @@ a:hover {
 
 .small-char {
     font-size: 12px;
-    /* color: gray; */
-    /* opacity: .9; */
+}
+
+.profile {
+    padding-top: 6px;
 }

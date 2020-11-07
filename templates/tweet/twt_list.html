@@ -13,13 +13,7 @@
 <div class="partition-line"></div>
 {% for tweet in tweets %}
     <div class="tweetblock">
-        <!-- 下三角マークのプルダウンで削除と編集のリンクを表示するように修正する -->
-        {% if user == tweet.tweet.author %}
-            <div class="delete-button">
-                <a class="btn btn-secondary" href="{% url 'tweet:twt_delete' tweet.tweet.id %}">Delete</a>
-            </div>
-        {% endif %}
-        <a href="{% url 'tweet:twt_detail' tweet.tweet.pk %}"></a>
+        <a class="tweet-area" href="{% url 'tweet:twt_detail' tweet.tweet.pk %}"></a>
         <div class="tweetdiv">
             <!-- プロフィール画面に飛ぶ -->
             <a class="inlink" href="">
@@ -32,13 +26,25 @@
         </div>
         <div class="tweetdiv tweet-content">
 
-            <p class="username">{{ tweet.tweet.author.username }}</p>
+            <div class="block-upper">
+                <div class="username">{{ tweet.tweet.author.username }}</div>
+                {% if user == tweet.tweet.author %}
+                <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_edit' tweet.tweet.id %}">Edit</a>
+                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_delete' tweet.tweet.id %}">Delete</a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
             <p class="tweet-text">{{ tweet.tweet.tweet }}</p>
             {% if tweet.tweet.picture %}
                 <p class="tweetpicture"><img src="{{ tweet.tweet.picture.url }}" width="300"></p>
             {% endif %}
             <!-- コメント入力画面に飛ぶ -->
-            <a class="inlink comment_icon" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="{% static 'image/comment.jpg' %}">{{ tweet.comments }}</a>
+            <a class="inlink comment_icon" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="{% static 'image/comment.png' %}">{{ tweet.comments }}</a>
             <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
             <a class="inlink likeicon" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}">{{ tweet.tweet.like|length }}</a>
             <p class="tweettime">{{ tweet.tweet_time }}</p>

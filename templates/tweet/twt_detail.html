@@ -30,7 +30,7 @@
     <span>{{ tweet.like|length }}件のいいね！</span>
     <!-- 罫線入れる -->
     <div>
-        <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.jpg' %}"></a>
+        <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.png' %}"></a>
         <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
         <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
     </div>
@@ -38,12 +38,6 @@
 </div>
     {% for comment in comments %}
         <div class="tweetblock">
-        <!-- 下三角マークのプルダウンで削除と編集のリンクを表示するように修正する -->
-        {% if user == comment.author %}
-            <div class="delete-button">
-                <a class="btn btn-secondary" href="{% url 'tweet:comment_delete' comment.pk %}">Delete</a>
-            </div>
-        {% endif %}
             <div class="tweetdiv">
                 <!-- プロフィール画面に飛ぶ -->
                 <a class="inlink" href="">
@@ -54,8 +48,20 @@
                     {% endif %}
                 </a>
             </div>
-            <div class="tweetdiv">
-                <p class="username">{{ comment.author.username }}</p>
+            <div class="tweetdiv tweet-content">
+                <div class="block-upper">
+                    <div class="username">{{ comment.author.username }}</div>
+                    {% if user == comment.author %}
+                    <div class="btn-group">
+                        <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item small-char" href="{% url 'tweet:comment_edit' comment.pk %}">Edit</a>
+                            <a class="dropdown-item small-char" href="{% url 'tweet:comment_delete' comment.pk %}">Delete</a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
                 <p class="tweet-text">{{ comment.comment }}</p>
                 <p class="tweettime">{{ comment.created|date:"Y/m/j H:i:s" }}</p>
                 <a class="inlink" href=""><img class="like-image" src="/media/image/heart_blank.png"></a>
