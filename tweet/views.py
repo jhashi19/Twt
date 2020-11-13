@@ -26,11 +26,15 @@ class TwtListView(ListView):
         now = datetime.now()
         for tweet in tweet_list:
             tweet_time = calc_tweet_time(now, tweet.created)
+            tweet_liked = False
+            if tweet.like.filter(id=self.request.user.id).exists():
+                tweet_liked = True
             tweets.append({
                 'tweet': tweet,
                 'tweet_time': tweet_time,
                 'comments': Comment.objects.select_related('tweet').filter(
                     tweet__id=tweet.id).count(),
+                'tweet_liked': tweet_liked
             })
         context.update({'tweets': tweets})
         return context
@@ -105,7 +109,6 @@ class TwtCommentCreateView(LoginRequiredMixin, CreateView):
     model = Comment
     template_name = 'tweet/comment_create.html'
     fields = ['comment']
-    # success_url = reverse_lazy('tweet:twt_detail')
     login_url = 'login'
     # 上にツイートはあるが、表示はコメント部分が一番上に表示されるように最初からスクロールされた状態で表示する。
 
@@ -159,6 +162,7 @@ class TwtCommentEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name = 'tweet/comment_edit.html'
     fields = ['comment']
     login_url = 'login'
+    form_class = CommentForm
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -178,6 +182,30 @@ class TwtCommentEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         comment = Comment.objects.get(pk=self.kwargs['pk'])
         return reverse_lazy('tweet:twt_detail',
                             kwargs={'pk': comment.tweet.id})
+
+
+class TwtLikeView(RedirectView):
+    url = reverse_lazy('tweet:twt_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+def tweet_like(request):
+    # if request.user.is_authenticated():
+    tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
+    tweet_liked = False
+    if tweet.like.filter(id=request.user.id).exists():
+        tweet.like.remove(request.user)
+        tweet_liked = False
+    else:
+        tweet.like.add(request.user)
+        tweet_liked = True
+    return redirect('tweet:twt_list')
+    # else:
+    #     return redirect('login')
+        # 'bool' object is not callable のエラーが出る。
 
 
 def calc_tweet_time(now, created_time):

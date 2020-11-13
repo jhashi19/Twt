@@ -98,3 +98,24 @@ a:hover {
 .profile {
     padding-top: 6px;
 }
+
+.like-red {
+    color: red;
+}
+
+.comment-like {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.like-area {
+    padding: 0 0 0 3px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+}
+
+.like-count {
+    display: block;
+}

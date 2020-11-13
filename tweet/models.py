@@ -12,12 +12,13 @@ class Tweet(models.Model):
     )
     author = models.ForeignKey(
         get_user_model(),
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='tweet_author'
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    like = models.IntegerField(default=0)
-    # ↑いいねはIntegerではなく、ForeignKeyでユーザを直接紐づけるようにする。default=null
+    like = models.ManyToManyField(get_user_model(),
+                                  blank=True)
 
     def __str__(self):
         if len(self.tweet) < 10:
@@ -37,10 +38,11 @@ class Comment(models.Model):
     comment = models.TextField(max_length=255)
     author = models.ForeignKey(
         get_user_model(),
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='comment_author'
     )
-    like = models.IntegerField(default=0)
-    # ↑いいねはIntegerではなく、ForeignKeyでユーザを直接紐づけるようにする。
+    like = models.ManyToManyField(get_user_model(),
+                                  blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 

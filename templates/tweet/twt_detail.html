@@ -9,32 +9,48 @@
 {% endblock css %}
 
 {% block content %}
-<div class="profile">
-    <!-- プロフィール画面に飛ぶリンクを追加する -->
-    <a href="">
-        {% if tweet.author.icon %}
-            <img class="icon" src="{{ tweet.author.icon.url }}">
-        {% else %}
-            <img class="icon" src="{% static 'image/icon/noimage.png' %}">
-        {% endif %}
-    </a>
-    <a class="username" href="">{{ tweet.author.username }}</a>
-</div>
-<div class="tweet-detail">
-    <p class="tweet-text">{{ tweet.tweet }}</p>
-    {% if tweet.picture %}
-        <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
-    {% endif %}
-    <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
-    <!-- 罫線入れる -->
-    <span>{{ tweet.like|length }}件のいいね！</span>
-    <!-- 罫線入れる -->
-    <div>
-        <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.png' %}"></a>
-        <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
-        <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
+<div class="tweetblock">
+    <div class="tweetdiv tweet-content">
+        <div class="block-upper">
+            <div class="profile">
+                <!-- プロフィール画面に飛ぶリンクを追加する -->
+                <a href="">
+                    {% if tweet.author.icon %}
+                        <img class="icon" src="{{ tweet.author.icon.url }}">
+                    {% else %}
+                        <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+                    {% endif %}
+                </a>
+                <a class="username" href="">{{ tweet.author.username }}</a>
+            </div>
+            {% if user == tweet.author %}
+                <div class="btn-group">
+                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_edit' tweet.id %}">Edit</a>
+                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_delete' tweet.id %}">Delete</a>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+        <div class="tweet-detail">
+            <p class="tweet-text">{{ tweet.tweet }}</p>
+            {% if tweet.picture %}
+                <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
+            {% endif %}
+            <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
+            <!-- 罫線入れる -->
+            <span>{{ tweet.like|length }}件のいいね！</span>
+            <!-- 罫線入れる -->
+            <div>
+                <a class="inlink" href="{% url 'tweet:comment_create' tweet.id %}"><img class="comment-image" src="{% static 'image/comment.png' %}"></a>
+                <!-- いいねのボタンといいねをした人を表示するリンクをそれぞれ作る -->
+                <a class="inlink" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}"></a>
+            </div>
+            <div class="partition-line"></div>
+        </div>
     </div>
-    <div class="partition-line"></div>
 </div>
     {% for comment in comments %}
         <div class="tweetblock">

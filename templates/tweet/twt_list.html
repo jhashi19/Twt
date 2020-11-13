@@ -25,7 +25,6 @@
             </a>
         </div>
         <div class="tweetdiv tweet-content">
-
             <div class="block-upper">
                 <div class="username">{{ tweet.tweet.author.username }}</div>
                 {% if user == tweet.tweet.author %}
@@ -44,9 +43,27 @@
                 <p class="tweetpicture"><img src="{{ tweet.tweet.picture.url }}" width="300"></p>
             {% endif %}
             <!-- コメント入力画面に飛ぶ -->
-            <a class="inlink comment_icon" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="{% static 'image/comment.png' %}">{{ tweet.comments }}</a>
-            <!-- いいねをカウントアップ、またはカウントダウンするtoggleにする -->
-            <a class="inlink likeicon" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}">{{ tweet.tweet.like|length }}</a>
+            <div class="comment-like">
+                <div>
+                    <a class="inlink comment_icon" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="{% static 'image/comment.png' %}">{{ tweet.comments }}</a>
+                </div>
+                <div class="like-area">
+                    <form action="{% url 'tweet:tweet_like' %}" method="POST">
+                        {% csrf_token %}
+                        {% if tweet.tweet_liked %}
+                            <button type="submit" id="like" name="tweet_id" value="{{tweet.tweet.id}}" class="btn like-btn">
+                                <img class="like-image" src="{% static 'image/heart.png' %}">
+                            </button>
+                        {% else %}
+                            <button type="submit" id="like" name="tweet_id" value="{{tweet.tweet.id}}" class="btn like-btn">
+                                <img class="like-image" src="{% static 'image/heart_blank.png' %}">
+                            </button>
+                        {% endif %}
+                    </form>
+                    <a class="like-count" href="#">{{ tweet.tweet.like.count }}</a>
+                </div>
+            </div>
+            <!-- <a class="inlink likeicon" href=""><img class="like-image" src="{% static 'image/heart_blank.png' %}">{{ tweet.tweet.like|length }}</a> -->
             <p class="tweettime">{{ tweet.tweet_time }}</p>
         </div>
     </div>

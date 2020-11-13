@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}{% endblock title %}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" type="text/css">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% block css %}
     {% endblock css %}
@@ -22,7 +23,7 @@
           {% if user.icon %}
             <img class="mini-icon" src="{{ user.icon.url }}">
           {% else %}
-            <img class="icon" src="{% static 'image/icon/noimage.png' %}">
+            <img class="mini-icon" src="{% static 'image/icon/noimage.png' %}">
           {% endif %}
           </a>
         </div>
