@@ -116,6 +116,18 @@ a:hover {
     align-items: center;
 }
 
+.like-btn {
+    padding: 0;
+}
+
 .like-count {
     display: block;
+}
+
+.hide-heart {
+    display: none;
+}
+
+.hide-heart_blank {
+    display: none;
 }

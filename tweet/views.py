@@ -1,4 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, DetailView
@@ -48,13 +50,26 @@ class TwtDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         tweet = Tweet.objects.get(pk=self.kwargs['pk'])
+        tweet_liked = False
+        if tweet.like.filter(id=self.request.user.id).exists():
+            tweet_liked = True
         now = datetime.now()
         tweet_time = calc_tweet_time(now, tweet.created)
+        comment_list = Comment.objects.filter(tweet__id=self.kwargs['pk'])
+        comments = []
+        for comment in comment_list:
+            comment_liked = False
+            if comment.like.filter(id=self.request.user.id).exists():
+                comment_liked = True
+            comments.append({
+                'comment': comment,
+                'comment_liked': comment_liked,
+            })
         context.update({
-            'comments': Comment.objects.filter(
-                tweet__id=self.kwargs['pk']),
+            'comments': comments,
             'tweet': tweet,
-            'tweet_time': tweet_time
+            'tweet_time': tweet_time,
+            'tweet_liked': tweet_liked,
         })
         return context
 
@@ -184,28 +199,46 @@ class TwtCommentEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                             kwargs={'pk': comment.tweet.id})
 
 
-class TwtLikeView(RedirectView):
-    url = reverse_lazy('tweet:twt_list')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
-
-
+@login_required
 def tweet_like(request):
-    # if request.user.is_authenticated():
     tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
-    tweet_liked = False
     if tweet.like.filter(id=request.user.id).exists():
         tweet.like.remove(request.user)
-        tweet_liked = False
     else:
         tweet.like.add(request.user)
-        tweet_liked = True
-    return redirect('tweet:twt_list')
-    # else:
-    #     return redirect('login')
-        # 'bool' object is not callable のエラーが出る。
+    like_count = tweet.like.count()
+    json_data = {
+        'like_count': like_count
+    }
+    return JsonResponse(json_data)
+
+
+@login_required
+def comment_like(request):
+    comment = Comment.objects.get(id=request.POST.get('comment_id'))
+    if comment.like.filter(id=request.user.id).exists():
+        comment.like.remove(request.user)
+    else:
+        comment.like.add(request.user)
+    comment_like_count = comment.like.count()
+    json_data = {
+        'comment_like_count': comment_like_count
+    }
+    return JsonResponse(json_data)
+
+
+@login_required
+def tweet_detail_like(request):
+    tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
+    if tweet.like.filter(id=request.user.id).exists():
+        tweet.like.remove(request.user)
+    else:
+        tweet.like.add(request.user)
+    like_count = tweet.like.count()
+    json_data = {
+        'detail_like_count': like_count
+    }
+    return JsonResponse(json_data)
 
 
 def calc_tweet_time(now, created_time):
