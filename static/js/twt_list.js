@@ -24,6 +24,6 @@ $('.like-btn').on('click',　function(event){
                             '" href="' + like_count_href + '">' + resp.like_count + '</a>');
   })
   .fail(function(resp, e){
-          console.log(resp.responseText);
+    location.href = resp.responseText;
   })
 });

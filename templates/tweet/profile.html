@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Profile{% endblock title %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/twt.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="profile-header">
+{% if user.icon %}
+    <img class="big-icon" src="{{ user.icon.url }}">
+{% else %}
+    <img class="big-icon" src="{% static 'image/icon/noimage.png' %}">
+{% endif %}
+<!-- フォロー中なら「フォロー中」そうでなければ「フォローする」ボタンをつける -->
+</div>
+
+<p class="profile-name">{{ user.username }}</p>
+{% if user.age %}
+    <p class="profile-age">Age: {{ user.age }}</p>
+{% else %}
+    <p class="profile-age">Age: Secret</p>
+{% endif %}
+
+<!-- ○○フォロー中　○○フォロワー -->
+
+{% include 'tweet/tweet.html' %}
+
+{% endblock content %}
+{% block script %}
+<script type="text/javascript" src="{% static 'js/ajaxSetup.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/twt_list.js' %}"></script>
+{% endblock script %}
+

@@ -49,6 +49,16 @@ a:hover {
     height: 35px;
 }
 
+.big-icon {
+    border-radius: 50%;
+    width: 71.4px;
+    height: 71.4px;
+}
+
+.username {
+    font-weight: 700;
+}
+
 .username-field {
     width: 300px;
 }
@@ -130,4 +140,13 @@ a:hover {
 
 .hide-heart_blank {
     display: none;
+}
+
+.profile-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.profile-header {
+    margin: 7px 0;
 }

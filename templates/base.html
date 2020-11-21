@@ -19,7 +19,7 @@
       {% if user.is_authenticated %}
       <div class="header-tweet">
         <div>
-          <a href="#">
+          <a href="{% url 'tweet:profile' user.id %}">
           {% if user.icon %}
             <img class="mini-icon" src="{{ user.icon.url }}">
           {% else %}

@@ -24,7 +24,7 @@ $('.like-btn').on('click',　function(event){
                               '" href="' + like_count_href + '">' + resp.comment_like_count + '</a>');
     })
     .fail(function(resp, e){
-            console.log(resp.responseText);
+        location.href = resp.responseText;
     })
 });
 
@@ -50,7 +50,7 @@ $('.detail-like-btn').on('click',　function(event){
         $('#' + like_count_id).html('<span id="' + like_count_id + '">'
             + resp.detail_like_count + '件のいいね！</span>')
     })
-    .fail(function(e){
-            // console.log(resp.responseText);
+    .fail(function(resp, e){
+        location.href = resp.responseText;
     })
 });

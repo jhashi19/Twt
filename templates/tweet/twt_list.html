@@ -10,65 +10,7 @@
 {% block content %}
 <h1>Tweet</h1>
 <div class="create-tweet"><a href="{% url 'tweet:twt_create' %}"><img class="icon" src="{% static 'image/pencil.png' %}"></a></div>
-<div class="partition-line"></div>
-{% for tweet in tweets %}
-    <div class="tweetblock">
-        <a class="tweet-area" href="{% url 'tweet:twt_detail' tweet.tweet.pk %}"></a>
-        <div class="tweetdiv">
-            <!-- プロフィール画面に飛ぶ -->
-            <a class="inlink" href="">
-                {% if tweet.tweet.author.icon %}
-                    <img class="icon" src="{{ tweet.tweet.author.icon.url }}">
-                {% else %}
-                    <img class="icon" src="{% static 'image/icon/noimage.png' %}">
-                {% endif %}
-            </a>
-        </div>
-        <div class="tweetdiv tweet-content">
-            <div class="block-upper">
-                <div class="username">{{ tweet.tweet.author.username }}</div>
-                {% if user == tweet.tweet.author %}
-                <div class="btn-group">
-                    <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    </button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_edit' tweet.tweet.id %}">Edit</a>
-                        <a class="dropdown-item small-char" href="{% url 'tweet:twt_delete' tweet.tweet.id %}">Delete</a>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-            <p class="tweet-text">{{ tweet.tweet.tweet }}</p>
-            {% if tweet.tweet.picture %}
-                <p class="tweetpicture"><img src="{{ tweet.tweet.picture.url }}" width="300"></p>
-            {% endif %}
-            <!-- コメント入力画面に飛ぶ -->
-            <div class="comment-like">
-                <div>
-                    <a class="inlink comment_icon" href="{% url 'tweet:comment_create' tweet.tweet.pk %}"><img class="comment-image" src="{% static 'image/comment.png' %}">{{ tweet.comments }}</a>
-                </div>
-                <div class="like-area">
-                    <div>
-                        {% if tweet.tweet_liked %}
-                            <button type="submit" name="tweet_id" value="{{tweet.tweet.id}}" class="btn like-btn" data-href="{% url 'tweet:tweet_like' %}">
-                                <img id="tweet-like-{{tweet.tweet.id}}" class="like-image" src="{% static 'image/heart.png' %}">
-                                <img id="tweet-not-like-{{tweet.tweet.id}}" class="like-image hide-heart_blank" src="{% static 'image/heart_blank.png' %}">
-                            </button>
-                        {% else %}
-                            <button type="submit" name="tweet_id" value="{{tweet.tweet.id}}" class="btn like-btn" data-href="{% url 'tweet:tweet_like' %}">
-                                <img id="tweet-like-{{tweet.tweet.id}}" class="like-image hide-heart" src="{% static 'image/heart.png' %}">
-                                <img id="tweet-not-like-{{tweet.tweet.id}}" class="like-image" src="{% static 'image/heart_blank.png' %}">
-                            </button>
-                        {% endif %}
-                    </div>
-                    <a id="tweet-like-count-{{tweet.tweet.id}}" class="like-count" href="#">{{ tweet.tweet.like.count }}</a>
-                </div>
-            </div>
-            <p class="tweettime">{{ tweet.tweet_time }}</p>
-        </div>
-    </div>
-    <div class="partition-line"></div>
-{% endfor %}
+{% include 'tweet/tweet.html' %}
 
 {% endblock content %}
 {% block script %}

@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, RedirectView, DetailView
@@ -8,6 +8,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from datetime import datetime, timedelta
 from .models import Tweet, Comment
 from .forms import TweetForm, CommentForm
+from users.models import CustomUser
 
 
 # LoginRequiredMixinを先に継承することでログインしていないユーザはツイート画面を開けないようにする。
@@ -199,46 +200,82 @@ class TwtCommentEditView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                             kwargs={'pk': comment.tweet.id})
 
 
-@login_required
+class ProfileView(ListView):
+    model = Tweet
+    template_name = 'tweet/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = CustomUser.objects.get(id=self.kwargs['pk'])
+        tweets = []
+        tweet_list = Tweet.objects.filter(
+            author_id=self.kwargs['pk']).order_by('-created')
+        now = datetime.now()
+        for tweet in tweet_list:
+            tweet_time = calc_tweet_time(now, tweet.created)
+            tweet_liked = False
+            if tweet.like.filter(id=self.request.user.id).exists():
+                tweet_liked = True
+            tweets.append({
+                'tweet': tweet,
+                'tweet_time': tweet_time,
+                'comments': Comment.objects.select_related('tweet').filter(
+                    tweet__id=tweet.id).count(),
+                'tweet_liked': tweet_liked
+            })
+        context.update({
+            'tweets': tweets,
+            'user': user
+        })
+        return context
+
+
 def tweet_like(request):
-    tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
-    if tweet.like.filter(id=request.user.id).exists():
-        tweet.like.remove(request.user)
+    if request.user.is_authenticated:
+        tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
+        if tweet.like.filter(id=request.user.id).exists():
+            tweet.like.remove(request.user)
+        else:
+            tweet.like.add(request.user)
+        like_count = tweet.like.count()
+        json_data = {
+            'like_count': like_count
+        }
+        return JsonResponse(json_data)
     else:
-        tweet.like.add(request.user)
-    like_count = tweet.like.count()
-    json_data = {
-        'like_count': like_count
-    }
-    return JsonResponse(json_data)
+        return HttpResponse(reverse_lazy('login'))
 
 
-@login_required
 def comment_like(request):
-    comment = Comment.objects.get(id=request.POST.get('comment_id'))
-    if comment.like.filter(id=request.user.id).exists():
-        comment.like.remove(request.user)
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(id=request.POST.get('comment_id'))
+        if comment.like.filter(id=request.user.id).exists():
+            comment.like.remove(request.user)
+        else:
+            comment.like.add(request.user)
+        comment_like_count = comment.like.count()
+        json_data = {
+            'comment_like_count': comment_like_count
+        }
+        return JsonResponse(json_data)
     else:
-        comment.like.add(request.user)
-    comment_like_count = comment.like.count()
-    json_data = {
-        'comment_like_count': comment_like_count
-    }
-    return JsonResponse(json_data)
+        return HttpResponse(reverse_lazy('login'))
 
 
-@login_required
 def tweet_detail_like(request):
-    tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
-    if tweet.like.filter(id=request.user.id).exists():
-        tweet.like.remove(request.user)
+    if request.user.is_authenticated:
+        tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
+        if tweet.like.filter(id=request.user.id).exists():
+            tweet.like.remove(request.user)
+        else:
+            tweet.like.add(request.user)
+        like_count = tweet.like.count()
+        json_data = {
+            'detail_like_count': like_count
+        }
+        return JsonResponse(json_data)
     else:
-        tweet.like.add(request.user)
-    like_count = tweet.like.count()
-    json_data = {
-        'detail_like_count': like_count
-    }
-    return JsonResponse(json_data)
+        return HttpResponse(reverse_lazy('login'))
 
 
 def calc_tweet_time(now, created_time):

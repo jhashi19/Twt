@@ -42,10 +42,6 @@
     width: 100%;
 }
 
-.username {
-    font-weight: 700;
-}
-
 .tweettime {
     font-size: 0.7rem;
     color: gray;
@@ -80,4 +76,5 @@
 .block-upper {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
 }

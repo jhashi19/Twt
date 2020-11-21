@@ -9,7 +9,7 @@ from .models import CustomUser
 
 class SignUpView(CreateView):
     model = CustomUser
-    template_name = 'signup.html'
+    template_name = 'users/signup.html'
     form_class = CustomUserCreationModelForm
 
     def post(self, *args, **kwargs):
@@ -17,7 +17,7 @@ class SignUpView(CreateView):
                                            self.request.FILES)
         is_valid = form.is_valid()
         if not is_valid:
-            return render(self.request, 'signup.html', {'form': form})
+            return render(self.request, 'users/signup.html', {'form': form})
         user = form.save(commit=False)
         user.set_password(form.cleaned_data['password'])
         user.save()
@@ -26,10 +26,8 @@ class SignUpView(CreateView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomUser
-    template_name = 'user_update.html'
+    template_name = 'users/user_update.html'
     form_class = CustomUserChangeModelForm
     success_url = reverse_lazy('login')  # ユーザ情報を更新したらプロフィール画面に戻るよう修正。
     login_url = 'login'
     fields = ['username', 'icon', 'email', 'age']
-
-# プロフィール画面作成
