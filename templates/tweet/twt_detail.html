@@ -86,7 +86,7 @@
                     {% endif %}
                 </div>
                 <p class="tweet-text">{{ comment.comment.comment }}</p>
-                <p class="tweettime">{{ comment.comment.created|date:"Y/m/j H:i:s" }}</p>
+                <p class="gray-char">{{ comment.comment.created|date:"Y/m/j H:i:s" }}</p>
                 <div class="like-area">
                     <div>
                         {% if comment.comment_liked %}

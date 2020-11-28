@@ -24,7 +24,7 @@
     {% if tweet.picture %}
         <p class="tweetpicture"><img src="{{ tweet.picture.url }}" width="380"></p>
     {% endif %}
-    <p class="tweettime">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
+    <p class="gray-char">{{ tweet.created|date:"Y/m/j H:i:s"}}</p>
     <!-- <div class="partition-line"></div> -->
     <span>{{ tweet.like|length }}件のいいね！</span>
 </div>

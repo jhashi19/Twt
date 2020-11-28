@@ -16,12 +16,7 @@ $('.like-btn').on('click',　function(event){
         $('#comment-like-' + comment_id).toggleClass('hide-heart');
         $('#comment-not-like-' + comment_id).toggleClass('hide-heart_blank');
         // resp.like_countでいいねの数を更新
-        let like_count_id = 'comment-like-count-' + comment_id;
-        let like_count_attrs = $('#' + like_count_id);
-        let like_count_class = like_count_attrs.attr('class');
-        let like_count_href = like_count_attrs.attr('href');
-        like_count_attrs.html('<a id="' + like_count_id + '" class="' + like_count_class +
-                              '" href="' + like_count_href + '">' + resp.comment_like_count + '</a>');
+        $('#comment-like-count-' + comment_id).text(resp.comment_like_count)
     })
     .fail(function(resp, e){
         location.href = resp.responseText;
@@ -46,9 +41,7 @@ $('.detail-like-btn').on('click',　function(event){
         $('#detail-like').toggleClass('hide-heart');
         $('#detail-not-like').toggleClass('hide-heart_blank');
         // resp.like_countでいいねの数を更新
-        let like_count_id = 'tweet-detail-like';
-        $('#' + like_count_id).html('<span id="' + like_count_id + '">'
-            + resp.detail_like_count + '件のいいね！</span>')
+        $('#tweet-detail-like').text(resp.detail_like_count + '件のいいね！')
     })
     .fail(function(resp, e){
         location.href = resp.responseText;

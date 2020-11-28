@@ -1,5 +1,4 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
@@ -206,7 +205,12 @@ class ProfileView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = CustomUser.objects.get(id=self.kwargs['pk'])
+        profile_user = CustomUser.objects.get(id=self.kwargs['pk'])
+        follower_count = profile_user.followers.all().count()
+        following_count = profile_user.followees.all().count()
+        is_follow = False
+        if profile_user.followers.filter(id=self.request.user.id).exists():
+            is_follow = True
         tweets = []
         tweet_list = Tweet.objects.filter(
             author_id=self.kwargs['pk']).order_by('-created')
@@ -225,21 +229,29 @@ class ProfileView(ListView):
             })
         context.update({
             'tweets': tweets,
-            'user': user
+            'profile_user': profile_user,
+            'is_follow': is_follow,
+            'follower_count': follower_count,
+            'following_count': following_count,
         })
         return context
 
 
+# ブラウザバックでいいねの挙動がおかしくなる。ハートのオンオフが逆になる。またはいいね数が逆になる。
 def tweet_like(request):
     if request.user.is_authenticated:
         tweet = Tweet.objects.get(id=request.POST.get('tweet_id'))
+        tweet_like = False
         if tweet.like.filter(id=request.user.id).exists():
             tweet.like.remove(request.user)
+            tweet_like = False
         else:
             tweet.like.add(request.user)
+            tweet_like = True
         like_count = tweet.like.count()
         json_data = {
-            'like_count': like_count
+            'like_count': like_count,
+            'tweet_like': tweet_like,
         }
         return JsonResponse(json_data)
     else:

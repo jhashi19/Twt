@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User List{% endblock title %}
+
+{% block content %}
+<h4>{{ title }}</h4>
+<ul class="user-list">
+{% for user in user_list %}
+    <li>
+        <a href="{% url 'tweet:profile' user.id %}">
+            {% if user.icon %}
+                <img class="mini-icon" src="{{ user.icon.url }}">
+            {% else %}
+                <img class="mini-icon" src="{% static 'image/icon/noimage.png' %}">
+            {% endif %}
+            <span class="">{{ user.username }}</span>
+        </a>
+    </li>
+{% endfor %}
+</ul>
+{% endblock content %}
